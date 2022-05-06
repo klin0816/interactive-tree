@@ -1,13 +1,17 @@
 <script>
+  import yaml from 'js-yaml'
   import { onMount } from 'svelte' 
-  import { base } from './lib/base.js'
-  import { searchParent, searchChild, restructure } from './lib/tree.js'
+  import { mock } from './assets/mock'
+  import { searchParent, searchChild, restructure, load } from './lib/utils'
+  import {
+    LAYER_COLOR,
+    LINE_COLOR,
+    LINE_WIDTH,
+  } from './constants/res.js'
 
+  let base = load(yaml.load(mock))
   let lineContainer
-  let LINE_COLOR = 'green'
-  let LINE_WIDTH = 5
   let newBase = restructure(base)
-  let LAYER_COLOR = ['red', 'green', 'blue']
 
   onMount(async () => {
     for (const block of Object.keys(base)){
@@ -80,10 +84,9 @@
     for (const node of Object.keys(base)) {
       if (!(family.includes(node))) {
         base[node]['selected'] = false
-      }
+      }   
     }
   }
-  
 </script>
 
 <template lang="pug">
