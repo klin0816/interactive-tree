@@ -54,22 +54,22 @@
     const angle = Math.atan2((y1 - y2), (x1 - x2)) * (180 / Math.PI);
   
     const line = "padding:0px;" +
-                     "margin:0px;" +
-                     "height:" + thickness + "px;" +
-                     "background-color:" + color + ";" +
-                     "line-height:1px;" +
-                     "position:absolute;" +
-                     "left:" + cx + "px;" +
-                     "top:" + cy + "px;" +
-                     "width:" + length + "px;" +
-                     "-moz-transform:rotate(" + angle + "deg);" +
-                     "-webkit-transform:rotate(" + angle + "deg);" +
-                     "-o-transform:rotate(" + angle + "deg);" +
-                     "-ms-transform:rotate(" + angle + "deg);" +
-                     "transform:rotate(" + angle + "deg);";
+                 "margin:0px;" +
+                 "height:" + thickness + "px;" +
+                 "background-color:" + color + ";" +
+                 "line-height:1px;" +
+                 "position:absolute;" +
+                 "left:" + cx + "px;" +
+                 "top:" + cy + "px;" +
+                 "width:" + length + "px;" +
+                 "-moz-transform:rotate(" + angle + "deg);" +
+                 "-webkit-transform:rotate(" + angle + "deg);" +
+                 "-o-transform:rotate(" + angle + "deg);" +
+                 "-ms-transform:rotate(" + angle + "deg);" +
+                 "transform:rotate(" + angle + "deg);";
   
     const child = document.createElement('div')
-    child.style=line
+    child.setAttribute("style", line)
     lineContainer.appendChild(child)
   }
 
