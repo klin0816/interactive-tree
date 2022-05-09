@@ -10,8 +10,10 @@
   } from './constants/res.js'
 
   let base = load(yaml.load(mock))
-  let lineContainer
+  let clear = 0
   let newBase = restructure(base)
+  let selected
+  let lineContainer
 
   onMount(async () => {
     for (const block of Object.keys(base)){
@@ -25,6 +27,24 @@
       base[node]['selected'] = true
     }
   })
+
+  function clickOutside(node) {
+    const handleClick = event => {
+      if (node && !node.contains(event.target) && !event.defaultPrevented) {
+        node.dispatchEvent(
+          new CustomEvent('click_outside', node)
+        )
+      }
+    }
+
+    document.addEventListener('click', handleClick, true);
+    
+    return {
+      destroy() {
+        document.removeEventListener('click', handleClick, true);
+      }
+    }
+  }
 
   function getOffset(el) {
     const rect = el.getBoundingClientRect();
@@ -40,11 +60,11 @@
     const off1 = getOffset(div1);
     const off2 = getOffset(div2);
   
-    const x1 = off1.left+off1.width/2;
-    const y1 = off1.top+off1.height;
+    const x1 = off1.left+off1.width;
+    const y1 = off1.top+off1.height/2;
   
-    const x2 = off2.left+off2.width/2;
-    const y2 = off2.top;
+    const x2 = off2.left;
+    const y2 = off2.top+off2.height/2;
   
     const length = Math.sqrt(((x2-x1)*(x2-x1))+((y2-y1)*(y2-y1)));
   
@@ -74,9 +94,12 @@
   }
 
   function blur(id) {
-    for (const node in base) {
-      base[node]['selected'] = true
+    if (id === selected) {
+      return
     }
+    clearBlur()
+    selected = id
+    clear = 1
     let parents = searchParent(base, base[id])
     let children = searchChild(base, base[id])
     let family = parents.concat(children)
@@ -84,19 +107,33 @@
     for (const node of Object.keys(base)) {
       if (!(family.includes(node))) {
         base[node]['selected'] = false
-      }   
+      }
+    }
+  }
+
+  function clearBlur() {
+    if (clear === 1) {
+      clear = 0
+      return
+    }
+    selected = null
+    for (const node in base) {
+      base[node]['selected'] = true
     }
   }
 </script>
 
 <template lang="pug">
-  div(bind:this='{lineContainer}')
-  +each('Object.keys(newBase) as layer')
-    .flex.p-1
-      +each("newBase[layer] as block")
-        .p-1
-          .p-2(class="bg-{LAYER_COLOR[layer]}-300 {base[block]['selected'] === true ? 'opacity-100' : 'opacity-40'}",id="{block}",on:click!="{() => blur(block)}") {block}
+  .w-screen.h-screen(on:click!="{clearBlur}")
+    div(bind:this='{lineContainer}')
+    .grid.grid-flow-col.auto-cols-max
+      +each('Object.keys(newBase) as layer')
+        .flex.flex-col.p-2
+          +each("newBase[layer] as block")
+            .p-2
+              .p-2.w-24(class="bg-{LAYER_COLOR[layer]}-300 {base[block]['selected'] === true ? 'opacity-100' : 'opacity-40'}",id="{block}",on:click!="{() => blur(block)}") {base[block]["showingName"]}
 </template>
 
 <style>
+
 </style>

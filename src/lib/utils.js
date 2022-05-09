@@ -35,14 +35,17 @@ export function restructure(base) {
 export function load(base, parent = null, layer = 0, newBase = {}) {
   for (const node of base) {
     for (const key of Object.keys(node)) {
-      newBase[key] = {
+      newBase[`${layer}-${key}`] = {
+        showingName: key,
         parent: parent,
         child:
-          node[key] === null ? [] : node[key].map((x) => Object.keys(x)[0]),
+          node[key] === null
+            ? []
+            : node[key].map((x) => `${layer + 1}-${Object.keys(x)[0]}`),
         layer: layer,
       };
       if (!(node[key] === null)) {
-        load(node[key], key, layer + 1, newBase);
+        load(node[key], `${layer}-${key}`, layer + 1, newBase);
       }
     }
   }
