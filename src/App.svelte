@@ -62,6 +62,7 @@ function clearBlur() {
     base[node]['selected'] = true
   }
 }
+console.log(LAYER_COLOR)
 </script>
 
 <template lang="pug">
@@ -72,7 +73,13 @@ function clearBlur() {
       .flex.flex-col.p-2
         +each("newBase[layer] as block")
           .p-2
-            .p-2.w-24(class="bg-{LAYER_COLOR[layer]}-300 {base[block]['selected'] === true ? 'opacity-100' : 'opacity-40'}",id="{block}",on:click!="{() => blur(block)}") {base[block]["showingName"]}
+            .p-2.w-24(
+              class="{base[block]['selected'] === true ? 'opacity-100' : 'opacity-40'}",
+              style="background-color: {LAYER_COLOR[layer]}",
+              id="{block}",
+              on:click!="{() => blur(block)}",
+              ) {base[block]["showingName"]}
+      
 </template>
 
 <style>
