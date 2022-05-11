@@ -1,23 +1,13 @@
-export function searchParent(base, node, parents = []) {
-  if (node["parent"] === null) {
-    return parents;
+export function search(mode, base, node, linked = []) {
+  if (node[mode] === null) {
+    return linked;
   }
-  parents.push(node["parent"]);
-  searchParent(base, base[node["parent"]], parents);
-
-  return parents;
-}
-
-export function searchChild(base, node, children = []) {
-  if (node["child"] === []) {
-    return children;
-  }
-  for (const child of node["child"]) {
-    children.push(child);
-    searchChild(base, base[child], children);
+  for (const n of node[mode]) {
+    linked.push(n);
+    search(mode, base, base[n], linked);
   }
 
-  return children;
+  return linked;
 }
 
 export function restructure(base) {
@@ -35,12 +25,28 @@ export function restructure(base) {
 export function load(base, parent = null, layer = 0, newBase = {}) {
   for (const node of base) {
     for (const key of Object.keys(node)) {
-      newBase[`${layer}-${key}`] = {
+      const nodeKey = `${layer}-${key}`;
+      newBase[nodeKey] = {
         showingName: key,
-        parent: parent,
+        parent:
+          nodeKey in newBase
+            ? newBase[nodeKey]["parent"].includes(parent)
+              ? newBase[nodeKey]["parent"]
+              : newBase[nodeKey]["parent"].concat([parent])
+            : parent === null
+            ? null
+            : [parent],
         child:
-          node[key] === null
-            ? []
+          nodeKey in newBase
+            ? newBase[nodeKey]["child"] === []
+              ? newBase[nodeKey]["child"]
+              : node[key] === null
+              ? []
+              : newBase[nodeKey]["child"].concat(
+                  node[key].map((x) => `${layer + 1}-${Object.keys(x)[0]}`)
+                )
+            : node[key] === null
+            ? null
             : node[key].map((x) => `${layer + 1}-${Object.keys(x)[0]}`),
         layer: layer,
       };

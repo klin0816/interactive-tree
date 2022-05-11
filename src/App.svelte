@@ -2,12 +2,12 @@
 import yaml from 'js-yaml'
 import { onMount } from 'svelte' 
 import { mock } from './assets/mock'
+import { data } from './assets/data'
 import {
   connect,
   load,
   restructure,
-  searchParent,
-  searchChild
+  search,
 } from './lib/utils'
 import {
   LAYER_COLOR,
@@ -15,7 +15,7 @@ import {
   LINE_WIDTH,
 } from './constants/res.js'
 
-let base = load(yaml.load(mock))
+let base = load(yaml.load(data))
 let clear = 0
 let newBase = restructure(base)
 let selected
@@ -41,8 +41,8 @@ function blur(id) {
   clearBlur()
   selected = id
   clear = 1
-  let parents = searchParent(base, base[id])
-  let children = searchChild(base, base[id])
+  let parents = search("parent", base, base[id])
+  let children = search("child", base, base[id])
   let family = parents.concat(children)
   family.push(id)
   for (const node of Object.keys(base)) {
@@ -62,7 +62,6 @@ function clearBlur() {
     base[node]['selected'] = true
   }
 }
-console.log(LAYER_COLOR)
 </script>
 
 <template lang="pug">

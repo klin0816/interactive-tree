@@ -6,6 +6,9 @@ export const mock = `
       - bbb:
     - bb:
       - vvv:
+      - aaa:
+        - dddd:
+    - aaa:
   - B:
     - cc:
 `;
